@@ -72,9 +72,10 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
 
   const handleReject = useCallback(async () => {
     if (!todayDraw) return;
-    // Mark as skipped and re-draw same difficulty
-    const list = allChallenges[todayDraw.difficulty];
-    const random = list[Math.floor(Math.random() * list.length)];
+    // Mark as skipped and re-draw same difficulty (exclude current challenge)
+    const list = allChallenges[todayDraw.difficulty].filter(c => c.id !== todayDraw.challengeId);
+    const pool = list.length > 0 ? list : allChallenges[todayDraw.difficulty];
+    const random = pool[Math.floor(Math.random() * pool.length)];
     const updated: DailyDraw = {
       ...todayDraw,
       challengeId: random.id,
@@ -95,13 +96,17 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
   }, []);
 
   const handleChangeDifficulty = useCallback(async (diff: 'easy' | 'medium' | 'hard') => {
+    if (!todayDraw) return;
     await updateSettings({ preferredDifficulty: diff });
     setSettings(prev => prev ? { ...prev, preferredDifficulty: diff } : prev);
-    // Re-draw
-    const list = allChallenges[diff];
+    // Re-draw (exclude current challenge if same difficulty)
+    const pool = todayDraw.difficulty === diff
+      ? allChallenges[diff].filter(c => c.id !== todayDraw.challengeId)
+      : allChallenges[diff];
+    const list = pool.length > 0 ? pool : allChallenges[diff];
     const random = list[Math.floor(Math.random() * list.length)];
     const updated: DailyDraw = {
-      ...todayDraw!,
+      ...todayDraw,
       challengeId: random.id,
       difficulty: diff,
       text: random.text,

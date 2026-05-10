@@ -47,14 +47,18 @@ export async function updateSettings(changes: Partial<Omit<Settings, 'id'>>) {
   await db.settings.update(1, changes);
 }
 
+function fmtTaipei(d: Date): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(d);
+}
+
 export function getTodayStr(): string {
-  return new Date().toISOString().slice(0, 10);
+  return fmtTaipei(new Date());
 }
 
 export function getYesterdayStr(): string {
   const d = new Date();
   d.setDate(d.getDate() - 1);
-  return d.toISOString().slice(0, 10);
+  return fmtTaipei(d);
 }
 
 export async function calculateStreak(): Promise<number> {
