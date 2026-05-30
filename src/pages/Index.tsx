@@ -6,7 +6,8 @@ import {
   db, getSettings, updateSettings, getTodayStr, calculateStreak, completeToday,
   type DailyDraw, type Settings,
 } from '../db';
-import { Flame, BookOpen, Settings as SettingsIcon } from 'lucide-react';
+import { Flame, BookOpen, Settings as SettingsIcon, Sparkles, Send, Loader2 } from 'lucide-react';
+import { getApiKey, saveApiKey, generateReflection } from '../gemini';
 
 type Step = 'loading' | 'draw' | 'accepted' | 'completed';
 
@@ -20,6 +21,11 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
   const [streak, setStreak] = useState(0);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [apiKeyInput, setApiKeyInput] = useState('');
+  const [feelingText, setFeelingText] = useState('');
+  const [aiResponse, setAiResponse] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [reflectionError, setReflectionError] = useState('');
 
   // Init: load today's draw and streak
   useEffect(() => {
@@ -94,6 +100,21 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
     setStreak(stk);
     setStep('completed');
   }, []);
+
+  const handleReflection = useCallback(async () => {
+    if (!feelingText.trim() || !todayDraw) return;
+    if (!getApiKey()) { setApiKeyInput(''); setShowSettings(true); return; }
+    setIsGenerating(true);
+    setReflectionError('');
+    try {
+      const res = await generateReflection(todayDraw.text, feelingText.trim());
+      setAiResponse(res);
+    } catch (e) {
+      setReflectionError(e instanceof Error ? e.message : '生成失敗');
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [feelingText, todayDraw]);
 
   const handleChangeDifficulty = useCallback(async (diff: 'easy' | 'medium' | 'hard') => {
     if (!todayDraw) return;
@@ -170,6 +191,22 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
                 ))}
               </div>
             </div>
+            <div>
+              <label className="text-xs text-zinc-500 mb-2 block">Gemini API Key（AI 反思功能）</label>
+              <div className="flex gap-2">
+                <input
+                  type="password"
+                  value={apiKeyInput || getApiKey()}
+                  onChange={e => setApiKeyInput(e.target.value)}
+                  placeholder="AIzaSy..."
+                  className="flex-1 h-9 px-3 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-xs font-mono focus:outline-none focus:border-brand-light"
+                />
+                <button
+                  onClick={() => { saveApiKey(apiKeyInput); setApiKeyInput(''); }}
+                  className="px-3 py-1.5 rounded-xl bg-brand-light text-zinc-900 text-xs font-bold hover:opacity-90"
+                >儲存</button>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -224,6 +261,35 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
               <span className="text-sm font-bold text-orange-300">連續 {streak} 天</span>
             </div>
             <p className="mt-8 text-zinc-600 text-xs">明天會自動抽取新的挑戰，記得回來打卡</p>
+
+            {/* AI Reflection */}
+            <div className="mt-8 w-full bg-zinc-900 rounded-2xl border border-zinc-800 p-4 space-y-3">
+              <div className="flex items-center gap-2 text-zinc-400 text-xs font-semibold">
+                <Sparkles className="w-3.5 h-3.5" />
+                和 AI 分享你的感受（選填）
+              </div>
+              {!aiResponse ? (
+                <>
+                  <textarea
+                    value={feelingText}
+                    onChange={e => setFeelingText(e.target.value)}
+                    placeholder="今天完成這個挑戰的感覺怎麼樣？有什麼發現嗎？"
+                    rows={3}
+                    className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-xs resize-none focus:outline-none focus:border-brand-light placeholder:text-zinc-600"
+                  />
+                  {reflectionError && <p className="text-xs text-red-400">{reflectionError}</p>}
+                  <button
+                    onClick={handleReflection}
+                    disabled={isGenerating || !feelingText.trim()}
+                    className="w-full py-2 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-semibold hover:border-brand-light hover:text-brand-light disabled:opacity-40 transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    {isGenerating ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />生成中...</> : <><Send className="w-3.5 h-3.5" />送出</>}
+                  </button>
+                </>
+              ) : (
+                <p className="text-zinc-300 text-sm leading-relaxed">{aiResponse}</p>
+              )}
+            </div>
           </section>
         )}
       </main>
