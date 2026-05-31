@@ -56,24 +56,29 @@ export function getTodayStr(): string {
 }
 
 export function getYesterdayStr(): string {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
+  // 從台北時間字串做日期運算，避免跨時區偏移
+  const [y, m, day] = getTodayStr().split('-').map(Number);
+  const d = new Date(y, m - 1, day - 1);
   return fmtTaipei(d);
 }
 
+// 純讀取，不修改資料庫—避免每次 app 開啟就 reset streak
 export async function calculateStreak(): Promise<number> {
   const s = await getSettings();
   const today = getTodayStr();
   const yesterday = getYesterdayStr();
-
   if (s.lastCompletedDate === today || s.lastCompletedDate === yesterday) {
     return s.streak;
   }
-  // streak broken
+  return 0;
+}
+
+// 明確放棄/跳過時才呼叫此函數 reset streak
+export async function breakStreak() {
+  const s = await getSettings();
   if (s.streak !== 0) {
     await updateSettings({ streak: 0 });
   }
-  return 0;
 }
 
 export async function completeToday() {
@@ -115,7 +120,7 @@ async function calculateLongestStreak(): Promise<number> {
     const d = new Date(draw.id + 'T00:00:00');
     if (prevDate) {
       const diff = (d.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
-      if (diff === 1) {
+      if (Math.round(diff) === 1) {
         current++;
       } else {
         current = 1;

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Challenge } from '../data/challenges';
 
 interface Props {
@@ -25,7 +25,10 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
   const [isFlipped, setIsFlipped] = useState(false);
   const [timeInput, setTimeInput] = useState('');
   const [shake, setShake] = useState(false);
+  const shakeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const config = difficultyConfig[difficulty];
+
+  useEffect(() => () => { if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current); }, []);
 
   const handleFlip = useCallback(() => {
     if (!isFlipped) setIsFlipped(true);
@@ -38,8 +41,9 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
 
   const handleAccept = useCallback(() => {
     if (!isValidTime(timeInput)) {
+      if (shakeTimerRef.current) clearTimeout(shakeTimerRef.current);
       setShake(true);
-      setTimeout(() => setShake(false), 400);
+      shakeTimerRef.current = setTimeout(() => setShake(false), 400);
       return;
     }
     onAccept(timeInput);
