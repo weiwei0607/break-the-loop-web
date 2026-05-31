@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db, getStats, type DailyDraw } from '../db';
-import { ArrowLeft, Flame, Trophy, Target, SkipForward, Calendar } from 'lucide-react';
+import { ArrowLeft, Flame, Trophy, Target, SkipForward, Calendar, Download } from 'lucide-react';
 
 interface Props {
   onBack: () => void;
@@ -26,6 +26,41 @@ export const Passbook: React.FC<Props> = ({ onBack }) => {
 
   const completionRate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
 
+  function downloadReport() {
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const dateStr = `${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())}`;
+    const lines: string[] = [
+      '═══════════════════════════════════',
+      'BreakTheLoop 生活破圈器 任務存摺',
+      `匯出時間：${dateStr}`,
+      '═══════════════════════════════════',
+      '',
+      `【連續破圈】當前 ${stats.currentStreak} 天 | 最長 ${stats.longestStreak} 天`,
+      `【完成率】${completionRate}% （${stats.completed}/${stats.total} 天）`,
+      `【跳過次數】${stats.skipped} 次`,
+      '',
+      '【難度分布】',
+      `  簡單：${stats.byDifficulty.easy} 次`,
+      `  中等：${stats.byDifficulty.medium} 次`,
+      `  困難：${stats.byDifficulty.hard} 次`,
+      '',
+      '【歷史紀錄】',
+      ...records.slice(0, 30).map(r => {
+        const status = r.completedAt ? '✅' : r.skippedAt ? '⏭️' : '⏳';
+        const diff = r.difficulty === 'easy' ? '易' : r.difficulty === 'medium' ? '中' : '難';
+        return `${status} [${diff}] ${r.id}  ${r.text}`;
+      }),
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `breaktheloop-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-6 flex flex-col items-center">
       <header className="w-full max-w-lg mb-8">
@@ -36,10 +71,21 @@ export const Passbook: React.FC<Props> = ({ onBack }) => {
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm font-medium">返回今日挑戰</span>
         </button>
-        <h1 className="text-3xl font-black tracking-tighter text-brand-light mb-2">
-          任務存摺
-        </h1>
-        <p className="text-zinc-500 text-sm">記錄你的每一次破圈</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-black tracking-tighter text-brand-light mb-2">
+              任務存摺
+            </h1>
+            <p className="text-zinc-500 text-sm">記錄你的每一次破圈</p>
+          </div>
+          <button
+            onClick={downloadReport}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-brand-light hover:border-brand-light text-xs font-semibold transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" />
+            匯出
+          </button>
+        </div>
       </header>
 
       <main className="w-full max-w-lg space-y-8">
