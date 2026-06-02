@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { db, getStats, type DailyDraw } from '../db';
+import { db, getStats, getTodayStr, type DailyDraw } from '../db';
 import { ArrowLeft, Flame, Trophy, Target, SkipForward, Calendar, Download } from 'lucide-react';
 
 interface Props {
@@ -13,52 +13,66 @@ export const Passbook: React.FC<Props> = ({ onBack }) => {
     byDifficulty: { easy: 0, medium: 0, hard: 0 },
     currentStreak: 0, longestStreak: 0,
   });
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
+    let mounted = true;
     async function load() {
-      const all = await db.dailyDraws.orderBy('id').reverse().toArray();
-      setRecords(all);
-      const s = await getStats();
-      setStats(s);
+      try {
+        const all = await db.dailyDraws.orderBy('id').reverse().toArray();
+        const s = await getStats();
+        if (!mounted) return;
+        setRecords(all);
+        setStats(s);
+      } catch (err) {
+        console.error('Passbook load failed:', err);
+        if (mounted) setLoadError('載入資料失敗');
+      }
     }
     load();
+    return () => { mounted = false; };
   }, []);
 
   const completionRate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
 
   function downloadReport() {
-    const now = new Date();
-    const pad = (n: number) => String(n).padStart(2, '0');
-    const dateStr = `${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())}`;
-    const lines: string[] = [
-      '═══════════════════════════════════',
-      'BreakTheLoop 生活破圈器 任務存摺',
-      `匯出時間：${dateStr}`,
-      '═══════════════════════════════════',
-      '',
-      `【連續破圈】當前 ${stats.currentStreak} 天 | 最長 ${stats.longestStreak} 天`,
-      `【完成率】${completionRate}% （${stats.completed}/${stats.total} 天）`,
-      `【跳過次數】${stats.skipped} 次`,
-      '',
-      '【難度分布】',
-      `  簡單：${stats.byDifficulty.easy} 次`,
-      `  中等：${stats.byDifficulty.medium} 次`,
-      `  困難：${stats.byDifficulty.hard} 次`,
-      '',
-      '【歷史紀錄】',
-      ...records.slice(0, 30).map(r => {
-        const status = r.completedAt ? '✅' : r.skippedAt ? '⏭️' : '⏳';
-        const diff = r.difficulty === 'easy' ? '易' : r.difficulty === 'medium' ? '中' : '難';
-        return `${status} [${diff}] ${r.id}  ${r.text}`;
-      }),
-    ];
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `breaktheloop-${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const todayStr = getTodayStr();
+      const dateStr = `${todayStr.slice(0, 4)}/${todayStr.slice(5, 7)}/${todayStr.slice(8, 10)}`;
+      const lines: string[] = [
+        '═══════════════════════════════════',
+        'BreakTheLoop 生活破圈器 任務存摺',
+        `匯出時間：${dateStr}`,
+        '═══════════════════════════════════',
+        '',
+        `【連續破圈】當前 ${stats.currentStreak} 天 | 最長 ${stats.longestStreak} 天`,
+        `【完成率】${completionRate}% （${stats.completed}/${stats.total} 天）`,
+        `【跳過次數】${stats.skipped} 次`,
+        '',
+        '【難度分布】',
+        `  簡單：${stats.byDifficulty.easy} 次`,
+        `  中等：${stats.byDifficulty.medium} 次`,
+        `  困難：${stats.byDifficulty.hard} 次`,
+        '',
+        '【歷史紀錄】',
+        ...records.map(r => {
+          const status = r.completedAt ? '✅' : r.skippedAt ? '⏭️' : '⏳';
+          const diff = r.difficulty === 'easy' ? '易' : r.difficulty === 'medium' ? '中' : '難';
+          const text = r.text.replace(/\n/g, ' ').trim();
+          return `${status} [${diff}] ${r.id}  ${text}`;
+        }),
+      ];
+      const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `breaktheloop-${todayStr}.txt`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (err) {
+      console.error('downloadReport failed:', err);
+      alert('匯出失敗');
+    }
   }
 
   return (
@@ -77,6 +91,7 @@ export const Passbook: React.FC<Props> = ({ onBack }) => {
               任務存摺
             </h1>
             <p className="text-zinc-500 text-sm">記錄你的每一次破圈</p>
+            {loadError && <p className="text-xs text-red-400 mt-1">{loadError}</p>}
           </div>
           <button
             onClick={downloadReport}

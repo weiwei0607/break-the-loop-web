@@ -26,84 +26,113 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
   const [aiResponse, setAiResponse] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [reflectionError, setReflectionError] = useState('');
+  const [initError, setInitError] = useState('');
+  const [lastReflectAt, setLastReflectAt] = useState(0);
 
   // Init: load today's draw and streak
   useEffect(() => {
+    let mounted = true;
     async function init() {
-      const todayStr = getTodayStr();
-      const [draw, s, stk] = await Promise.all([
-        db.dailyDraws.get(todayStr),
-        getSettings(),
-        calculateStreak(),
-      ]);
-      setStreak(stk);
-      setSettings(s);
+      try {
+        const todayStr = getTodayStr();
+        const [draw, s, stk] = await Promise.all([
+          db.dailyDraws.get(todayStr),
+          getSettings(),
+          calculateStreak(),
+        ]);
+        if (!mounted) return;
+        setStreak(stk);
+        setSettings(s);
 
-      if (draw) {
-        setTodayDraw(draw);
-        if (draw.completedAt) {
-          setStep('completed');
-        } else if (draw.acceptedAt) {
-          setStep('accepted');
+        if (draw) {
+          setTodayDraw(draw);
+          if (draw.completedAt) {
+            setStep('completed');
+          } else if (draw.acceptedAt) {
+            setStep('accepted');
+          } else {
+            setStep('draw');
+          }
         } else {
+          // Auto-draw based on preference
+          const diff = s.preferredDifficulty || 'easy';
+          const list = allChallenges[diff];
+          const random = list[Math.floor(Math.random() * list.length)];
+          const newDraw: DailyDraw = {
+            id: todayStr,
+            challengeId: random.id,
+            difficulty: diff,
+            text: random.text,
+            plannedTime: '',
+          };
+          await db.dailyDraws.put(newDraw);
+          if (!mounted) return;
+          setTodayDraw(newDraw);
           setStep('draw');
         }
-      } else {
-        // Auto-draw based on preference
-        const diff = s.preferredDifficulty || 'easy';
-        const list = allChallenges[diff];
-        const random = list[Math.floor(Math.random() * list.length)];
-        const newDraw: DailyDraw = {
-          id: todayStr,
-          challengeId: random.id,
-          difficulty: diff,
-          text: random.text,
-          plannedTime: '',
-        };
-        await db.dailyDraws.put(newDraw);
-        setTodayDraw(newDraw);
-        setStep('draw');
+      } catch (err) {
+        console.error('Init failed:', err);
+        if (mounted) {
+          setInitError('載入資料失敗，請重新整理頁面');
+          setStep('draw');
+        }
       }
     }
     init();
+    return () => { mounted = false; };
   }, []);
 
   const handleAccept = useCallback(async (time: string) => {
     if (!todayDraw) return;
-    const updated = { ...todayDraw, plannedTime: time, acceptedAt: Date.now() };
-    await db.dailyDraws.put(updated);
-    setTodayDraw(updated);
-    setStep('accepted');
+    try {
+      const updated = { ...todayDraw, plannedTime: time, acceptedAt: Date.now() };
+      await db.dailyDraws.put(updated);
+      setTodayDraw(updated);
+      setStep('accepted');
+    } catch (err) {
+      console.error('handleAccept failed:', err);
+    }
   }, [todayDraw]);
 
   const handleReject = useCallback(async () => {
     if (!todayDraw) return;
-    // Mark as skipped and re-draw same difficulty (exclude current challenge)
-    const list = allChallenges[todayDraw.difficulty].filter(c => c.id !== todayDraw.challengeId);
-    const pool = list.length > 0 ? list : allChallenges[todayDraw.difficulty];
-    const random = pool[Math.floor(Math.random() * pool.length)];
-    const updated: DailyDraw = {
-      ...todayDraw,
-      challengeId: random.id,
-      text: random.text,
-      skippedAt: Date.now(),
-      acceptedAt: undefined,
-    };
-    await db.dailyDraws.put(updated);
-    setTodayDraw(updated);
-    setStep('draw');
+    try {
+      // Mark as skipped and re-draw same difficulty (exclude current challenge)
+      const list = allChallenges[todayDraw.difficulty].filter(c => c.id !== todayDraw.challengeId);
+      const pool = list.length > 0 ? list : allChallenges[todayDraw.difficulty];
+      const random = pool[Math.floor(Math.random() * pool.length)];
+      const updated: DailyDraw = {
+        ...todayDraw,
+        challengeId: random.id,
+        text: random.text,
+        skippedAt: Date.now(),
+        acceptedAt: undefined,
+      };
+      await db.dailyDraws.put(updated);
+      setTodayDraw(updated);
+      setStep('draw');
+    } catch (err) {
+      console.error('handleReject failed:', err);
+    }
   }, [todayDraw]);
 
   const handleComplete = useCallback(async () => {
-    await completeToday();
-    const stk = await calculateStreak();
-    setStreak(stk);
-    setStep('completed');
+    try {
+      await completeToday();
+      const stk = await calculateStreak();
+      setStreak(stk);
+      setStep('completed');
+    } catch (err) {
+      console.error('handleComplete failed:', err);
+    }
   }, []);
 
   const handleReflection = useCallback(async () => {
     if (!feelingText.trim() || !todayDraw) return;
     if (!getApiKey()) { setApiKeyInput(''); setShowSettings(true); return; }
+    // 2-second cooldown to prevent spam
+    if (Date.now() - lastReflectAt < 2000) return;
+    setLastReflectAt(Date.now());
     setIsGenerating(true);
     setReflectionError('');
     try {
@@ -114,29 +143,33 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
     } finally {
       setIsGenerating(false);
     }
-  }, [feelingText, todayDraw]);
+  }, [feelingText, todayDraw, lastReflectAt]);
 
   const handleChangeDifficulty = useCallback(async (diff: 'easy' | 'medium' | 'hard') => {
     if (!todayDraw) return;
-    await updateSettings({ preferredDifficulty: diff });
-    setSettings(prev => prev ? { ...prev, preferredDifficulty: diff } : prev);
-    // Re-draw (exclude current challenge if same difficulty)
-    const pool = todayDraw.difficulty === diff
-      ? allChallenges[diff].filter(c => c.id !== todayDraw.challengeId)
-      : allChallenges[diff];
-    const list = pool.length > 0 ? pool : allChallenges[diff];
-    const random = list[Math.floor(Math.random() * list.length)];
-    const updated: DailyDraw = {
-      ...todayDraw,
-      challengeId: random.id,
-      difficulty: diff,
-      text: random.text,
-      skippedAt: undefined,
-      acceptedAt: undefined,
-    };
-    await db.dailyDraws.put(updated);
-    setTodayDraw(updated);
-    setStep('draw');
+    try {
+      await updateSettings({ preferredDifficulty: diff });
+      setSettings(prev => prev ? { ...prev, preferredDifficulty: diff } : prev);
+      // Re-draw (exclude current challenge if same difficulty)
+      const pool = todayDraw.difficulty === diff
+        ? allChallenges[diff].filter(c => c.id !== todayDraw.challengeId)
+        : allChallenges[diff];
+      const list = pool.length > 0 ? pool : allChallenges[diff];
+      const random = list[Math.floor(Math.random() * list.length)];
+      const updated: DailyDraw = {
+        ...todayDraw,
+        challengeId: random.id,
+        difficulty: diff,
+        text: random.text,
+        skippedAt: undefined,
+        acceptedAt: undefined,
+      };
+      await db.dailyDraws.put(updated);
+      setTodayDraw(updated);
+      setStep('draw');
+    } catch (err) {
+      console.error('handleChangeDifficulty failed:', err);
+    }
   }, [todayDraw]);
 
   const challenge: Challenge | null = todayDraw
@@ -217,6 +250,7 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
           <div className="flex flex-col items-center justify-center py-20">
             <div className="w-8 h-8 border-2 border-brand-light border-t-transparent rounded-full animate-spin" />
             <p className="mt-4 text-zinc-500 text-sm">正在抽取今日挑戰...</p>
+            {initError && <p className="mt-2 text-xs text-red-400">{initError}</p>}
           </div>
         )}
 
