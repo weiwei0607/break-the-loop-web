@@ -35,3 +35,31 @@
   0%   { opacity: 0; }
   100% { opacity: 1; }
 }
+
+/* Breathing guide animations */
+@keyframes breathingInhale {
+  0%   { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(1.35); opacity: 0.8; }
+}
+
+@keyframes breathingHold {
+  0%   { transform: scale(1.35); opacity: 0.8; }
+  100% { transform: scale(1.35); opacity: 0.8; }
+}
+
+@keyframes breathingExhale {
+  0%   { transform: scale(1.35); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 0.4; }
+}
+
+.breathing-inhale {
+  animation: breathingInhale 4s ease-in-out forwards;
+}
+
+.breathing-hold {
+  animation: breathingHold 2s ease-in-out forwards;
+}
+
+.breathing-exhale {
+  animation: breathingExhale 6s ease-in-out forwards;
+}

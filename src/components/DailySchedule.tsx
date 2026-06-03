@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { CheckCircle2, Clock } from 'lucide-react';
+import { BreathingGuide } from './BreathingGuide';
 
 interface ScheduleItem {
   id: string;
@@ -95,6 +96,11 @@ export const DailySchedule: React.FC<Props> = ({ challengeText, challengeTime, o
             </div>
           ))}
         </div>
+      </section>
+
+      {/* 身體覺察引導 */}
+      <section className="py-6">
+        <BreathingGuide challengeText={challengeText} />
       </section>
 
       {/* 完成按鈕 */}

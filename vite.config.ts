@@ -20,4 +20,17 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-dexie': ['dexie'],
+        },
+      },
+    },
+    // Speed up builds and reduce asset size hints
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 500,
+  },
 });
