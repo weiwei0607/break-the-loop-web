@@ -57,7 +57,7 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
 
   return (
     <div
-      className="relative w-72 h-96 cursor-pointer [perspective:1000px]"
+      className="relative w-[min(288px,85vw)] h-[min(384px,75vw+100px)] cursor-pointer [perspective:1000px]"
       onClick={handleFlip}
       role="button"
       aria-label="點擊翻開挑戰卡片"

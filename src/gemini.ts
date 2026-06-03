@@ -2,16 +2,38 @@ const MODEL = 'gemini-2.5-flash';
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 const FETCH_TIMEOUT_MS = 30000;
 const MAX_INPUT_LENGTH = 500;
+const LS_KEY = 'btl_gemini_key';
 
-// In-memory only (safer than localStorage for API keys)
+// In-memory cache, persisted to localStorage
 let _apiKey = '';
 
+function loadApiKeyFromStorage(): string {
+  try {
+    return (localStorage.getItem(LS_KEY) ?? '').trim();
+  } catch {
+    return '';
+  }
+}
+
+// Initialize from localStorage on module load
+_apiKey = loadApiKeyFromStorage();
+
 export function getApiKey(): string {
+  if (!_apiKey) _apiKey = loadApiKeyFromStorage();
   return _apiKey;
 }
 
 export function saveApiKey(key: string) {
   _apiKey = key.trim();
+  try {
+    if (_apiKey) {
+      localStorage.setItem(LS_KEY, _apiKey);
+    } else {
+      localStorage.removeItem(LS_KEY);
+    }
+  } catch {
+    // localStorage unavailable, keep in-memory
+  }
 }
 
 function sanitizeInput(s: string): string {

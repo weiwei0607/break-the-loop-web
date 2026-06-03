@@ -2,11 +2,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { allChallenges, type Challenge } from '../data/challenges';
 import { ChallengeCard } from '../components/ChallengeCard';
 import { DailySchedule } from '../components/DailySchedule';
+import { Confetti } from '../components/Confetti';
 import {
   db, getSettings, updateSettings, getTodayStr, calculateStreak, completeToday,
   type DailyDraw, type Settings,
 } from '../db';
-import { Flame, BookOpen, Settings as SettingsIcon, Sparkles, Send, Loader2 } from 'lucide-react';
+import { Flame, BookOpen, Settings as SettingsIcon, Sparkles, Send, Loader2, RotateCcw } from 'lucide-react';
 import { getApiKey, saveApiKey, generateReflection } from '../gemini';
 
 type Step = 'loading' | 'draw' | 'accepted' | 'completed';
@@ -21,13 +22,14 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
   const [streak, setStreak] = useState(0);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [apiKeyInput, setApiKeyInput] = useState('');
+  const [apiKeyInput, setApiKeyInput] = useState(() => getApiKey());
   const [feelingText, setFeelingText] = useState('');
   const [aiResponse, setAiResponse] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [reflectionError, setReflectionError] = useState('');
   const [initError, setInitError] = useState('');
   const [lastReflectAt, setLastReflectAt] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Init: load today's draw and streak
   useEffect(() => {
@@ -121,6 +123,7 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
       await completeToday();
       const stk = await calculateStreak();
       setStreak(stk);
+      setShowConfetti(true);
       setStep('completed');
     } catch (err) {
       console.error('handleComplete failed:', err);
@@ -177,7 +180,8 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
     : null;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 p-6 flex flex-col items-center">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 p-4 sm:p-6 flex flex-col items-center">
+      <Confetti active={showConfetti} count={50} />
       {/* Header */}
       <header className="w-full max-w-lg mb-8 text-center relative">
         <div className="absolute right-0 top-0 flex gap-2">
@@ -229,13 +233,13 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
               <div className="flex gap-2">
                 <input
                   type="password"
-                  value={apiKeyInput || getApiKey()}
+                  value={apiKeyInput}
                   onChange={e => setApiKeyInput(e.target.value)}
                   placeholder="AIzaSy..."
                   className="flex-1 h-9 px-3 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-xs font-mono focus:outline-none focus:border-brand-light"
                 />
                 <button
-                  onClick={() => { saveApiKey(apiKeyInput); setApiKeyInput(''); }}
+                  onClick={() => { saveApiKey(apiKeyInput); }}
                   className="px-3 py-1.5 rounded-xl bg-brand-light text-zinc-900 text-xs font-bold hover:opacity-90"
                 >儲存</button>
               </div>
@@ -282,22 +286,47 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
         )}
 
         {step === 'completed' && challenge && (
-          <section className="w-full flex flex-col items-center animate-in fade-in zoom-in duration-700 py-12">
-            <div className="w-24 h-24 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center mb-6">
-              <svg className="w-12 h-12 text-green-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+          <section className="w-full flex flex-col items-center py-8">
+            {/* Checkmark with bounce animation */}
+            <div
+              className="w-24 h-24 rounded-full bg-green-500/10 border-2 border-green-500/40 flex items-center justify-center mb-5"
+              style={{ animation: 'bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards' }}
+            >
+              <svg className="w-12 h-12 text-green-400" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-zinc-100 mb-2">今日挑戰已完成！</h2>
-            <p className="text-zinc-500 text-sm mb-8">{challenge.text}</p>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20">
+            <h2
+              className="text-2xl font-bold text-zinc-100 mb-2"
+              style={{ animation: 'fadeIn 0.5s ease-out 0.3s both' }}
+            >
+              今日挑戰已完成！
+            </h2>
+            <p
+              className="text-zinc-500 text-sm mb-6 text-center px-4"
+              style={{ animation: 'fadeIn 0.5s ease-out 0.45s both' }}
+            >
+              {challenge.text}
+            </p>
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 mb-2"
+              style={{ animation: 'streakPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.6s both' }}
+            >
               <Flame className="w-4 h-4 text-orange-400" />
-              <span className="text-sm font-bold text-orange-300">連續 {streak} 天</span>
+              <span className="text-sm font-bold text-orange-300">連續 {streak} 天破圈</span>
             </div>
-            <p className="mt-8 text-zinc-600 text-xs">明天會自動抽取新的挑戰，記得回來打卡</p>
+            <p
+              className="text-zinc-600 text-xs mb-8"
+              style={{ animation: 'fadeIn 0.5s ease-out 0.9s both' }}
+            >
+              明天會自動抽取新的挑戰，記得回來打卡
+            </p>
 
             {/* AI Reflection */}
-            <div className="mt-8 w-full bg-zinc-900 rounded-2xl border border-zinc-800 p-4 space-y-3">
+            <div
+              className="w-full bg-zinc-900 rounded-2xl border border-zinc-800 p-4 space-y-3"
+              style={{ animation: 'fadeIn 0.5s ease-out 1s both' }}
+            >
               <div className="flex items-center gap-2 text-zinc-400 text-xs font-semibold">
                 <Sparkles className="w-3.5 h-3.5" />
                 和 AI 分享你的感受（選填）
@@ -311,6 +340,11 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
                     rows={3}
                     className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-xs resize-none focus:outline-none focus:border-brand-light placeholder:text-zinc-600"
                   />
+                  {!getApiKey() && (
+                    <p className="text-xs text-zinc-600">
+                      💡 需先在右上角⚙️設定 Gemini API Key 才能使用 AI 反思功能
+                    </p>
+                  )}
                   {reflectionError && <p className="text-xs text-red-400">{reflectionError}</p>}
                   <button
                     onClick={handleReflection}
@@ -321,7 +355,15 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
                   </button>
                 </>
               ) : (
-                <p className="text-zinc-300 text-sm leading-relaxed">{aiResponse}</p>
+                <div className="space-y-3">
+                  <p className="text-zinc-300 text-sm leading-relaxed">{aiResponse}</p>
+                  <button
+                    onClick={() => { setAiResponse(''); setFeelingText(''); }}
+                    className="flex items-center gap-1.5 text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
+                  >
+                    <RotateCcw className="w-3 h-3" />重新輸入
+                  </button>
+                </div>
               )}
             </div>
           </section>
