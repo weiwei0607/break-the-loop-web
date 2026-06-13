@@ -1,131 +1,234 @@
 import { useState, useCallback } from 'react';
-import { Zap, Clock, Sparkles, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Zap, Clock, Sparkles, ArrowRight } from 'lucide-react';
 import { updateSettings } from '../db';
 
 interface Props {
   onDone: () => void;
 }
 
-const steps = [
+const STEPS = [
   {
-    icon: <Zap className="w-10 h-10 text-brand-light" />,
-    title: '每天只需 2 分鐘',
+    num: '01',
+    Icon: Zap,
+    iconColor: '#a3e635',
+    iconBg: 'rgba(163,230,53,0.10)',
+    iconBorder: 'rgba(163,230,53,0.18)',
+    title: '每天只需\n2 分鐘',
     desc: '每天抽一張身體覺察任務，打破無意識的慣性循環，讓生活重新有感。',
+    accent: '#a3e635',
   },
   {
-    icon: <Clock className="w-10 h-10 text-orange-400" />,
-    title: '設定執行時間',
-    desc: '翻開卡片後，輸入你預計完成的時間（例如 1830），任務就會嵌入今日時程。',
+    num: '02',
+    Icon: Clock,
+    iconColor: '#fb923c',
+    iconBg: 'rgba(251,146,60,0.10)',
+    iconBorder: 'rgba(251,146,60,0.18)',
+    title: '嵌入你的\n時程表',
+    desc: '翻開卡片後輸入預計完成時間（例如 1830），挑戰自動插入今日行程。',
+    accent: '#fb923c',
   },
   {
-    icon: <Sparkles className="w-10 h-10 text-purple-400" />,
-    title: 'AI 陪你反思',
-    desc: '完成挑戰後，可以選填感受，讓 AI 給你個性化的鼓勵和一個值得思考的問題。',
+    num: '03',
+    Icon: Sparkles,
+    iconColor: '#c084fc',
+    iconBg: 'rgba(192,132,252,0.10)',
+    iconBorder: 'rgba(192,132,252,0.18)',
+    title: 'AI 陪你\n反思成長',
+    desc: '完成後分享感受，AI 給你個性化的鼓勵和一個值得思考的問題。',
+    accent: '#c084fc',
+  },
+];
+
+const DIFFICULTIES = [
+  {
+    key: 'easy' as const,
+    emoji: '🌱',
+    label: '簡單',
+    labelEn: 'EASY',
+    desc: '5–10 分鐘，身體覺察小動作',
+    color: '#22c55e',
+    activeBorder: 'rgba(34,197,94,0.5)',
+    activeBg: 'rgba(34,197,94,0.08)',
+  },
+  {
+    key: 'medium' as const,
+    emoji: '🌿',
+    label: '中等',
+    labelEn: 'MEDIUM',
+    desc: '20–40 分鐘，需要行動力',
+    color: '#f97316',
+    activeBorder: 'rgba(249,115,22,0.5)',
+    activeBg: 'rgba(249,115,22,0.08)',
+  },
+  {
+    key: 'hard' as const,
+    emoji: '🌳',
+    label: '困難',
+    labelEn: 'HARD',
+    desc: '跨出舒適圈的深度挑戰',
+    color: '#ef4444',
+    activeBorder: 'rgba(239,68,68,0.5)',
+    activeBg: 'rgba(239,68,68,0.08)',
   },
 ];
 
 export const Onboarding: React.FC<Props> = ({ onDone }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
-  const isLast = currentStep === steps.length;
+  const [step, setStep] = useState(0); // 0-2 = intro, 3 = difficulty
+  const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
+  const isIntro = step < STEPS.length;
+  const current = isIntro ? STEPS[step] : null;
+  const totalSteps = STEPS.length + 1;
 
-  const handleNext = useCallback(() => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(s => s + 1);
-    } else {
-      setCurrentStep(steps.length); // difficulty selection
-    }
-  }, [currentStep]);
+  const handleNext = useCallback(() => setStep(s => s + 1), []);
 
   const handleFinish = useCallback(async () => {
-    try {
-      await updateSettings({ preferredDifficulty: selectedDifficulty });
-    } catch {
-      // best-effort
-    }
+    try { await updateSettings({ preferredDifficulty: difficulty }); } catch { /* noop */ }
     onDone();
-  }, [selectedDifficulty, onDone]);
+  }, [difficulty, onDone]);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center px-6 py-12">
-      <h1 className="text-3xl font-black tracking-tighter text-brand-light mb-10">
-        BreakTheLoop
-      </h1>
+    <div className="min-h-screen text-zinc-100 flex flex-col relative overflow-hidden"
+      style={{ background: '#09090B' }}>
 
-      {!isLast ? (
-        <div
-          key={currentStep}
-          className="w-full max-w-sm flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-8 duration-500"
-        >
-          <div className="w-20 h-20 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-6">
-            {steps[currentStep].icon}
+      {/* Ambient color glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[280px] pointer-events-none transition-all duration-700"
+        style={{
+          background: `radial-gradient(ellipse, ${isIntro ? current!.accent : '#a3e635'}0D 0%, transparent 70%)`,
+          filter: 'blur(60px)',
+        }} />
+
+      {/* Header */}
+      <div className="relative z-10 px-6 pt-14 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-xl flex items-center justify-center"
+            style={{ background: 'rgba(163,230,53,0.12)', border: '1px solid rgba(163,230,53,0.2)' }}>
+            <Zap size={14} style={{ color: '#a3e635' }} />
           </div>
-          <h2 className="text-xl font-bold text-zinc-100 mb-3">{steps[currentStep].title}</h2>
-          <p className="text-zinc-400 text-sm leading-relaxed mb-10">{steps[currentStep].desc}</p>
-
-          {/* Step dots */}
-          <div className="flex gap-2 mb-8">
-            {steps.map((_, i) => (
-              <div
-                key={i}
-                className={`rounded-full transition-all duration-300 ${
-                  i === currentStep
-                    ? 'w-5 h-2 bg-brand-light'
-                    : i < currentStep
-                    ? 'w-2 h-2 bg-brand-light/50'
-                    : 'w-2 h-2 bg-zinc-700'
-                }`}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={handleNext}
-            className="w-full py-3.5 rounded-2xl bg-brand-light text-zinc-900 font-bold text-base flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-          >
-            繼續 <ChevronRight className="w-5 h-5" />
-          </button>
+          <span className="text-[13px] font-semibold text-zinc-500">BreakTheLoop</span>
         </div>
-      ) : (
-        <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-8 duration-500">
-          <h2 className="text-xl font-bold text-zinc-100 mb-2 text-center">選擇你的挑戰難度</h2>
-          <p className="text-zinc-500 text-sm text-center mb-8">之後在設定中可以隨時更改</p>
 
-          <div className="space-y-3 mb-8">
-            {([
-              { key: 'easy' as const, emoji: '🌱', label: '簡單', desc: '5–10 分鐘，身體覺察小動作' },
-              { key: 'medium' as const, emoji: '🌿', label: '中等', desc: '20–40 分鐘，需要行動力' },
-              { key: 'hard' as const, emoji: '🌳', label: '困難', desc: '跨出舒適圈的深度挑戰' },
-            ]).map(d => (
-              <button
-                key={d.key}
-                onClick={() => setSelectedDifficulty(d.key)}
-                className={`w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all ${
-                  selectedDifficulty === d.key
-                    ? 'bg-brand-light/10 border-brand-light/50 ring-1 ring-brand-light/30'
-                    : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-                }`}
-              >
-                <span className="text-2xl">{d.emoji}</span>
-                <div className="flex-1">
-                  <p className="font-bold text-zinc-100 text-sm">{d.label}</p>
-                  <p className="text-zinc-500 text-xs mt-0.5">{d.desc}</p>
-                </div>
-                {selectedDifficulty === d.key && (
-                  <CheckCircle2 className="w-5 h-5 text-brand-light shrink-0" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={handleFinish}
-            className="w-full py-3.5 rounded-2xl bg-brand-light text-zinc-900 font-bold text-base flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-          >
-            開始破圈！<Zap className="w-5 h-5" />
-          </button>
+        {/* Progress dots */}
+        <div className="flex items-center gap-1.5">
+          {Array.from({ length: totalSteps }).map((_, i) => (
+            <div key={i} className="rounded-full transition-all duration-300" style={{
+              width: i === step ? 18 : 6,
+              height: 6,
+              background: i === step
+                ? (isIntro ? current!.accent : '#a3e635')
+                : i < step ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.08)',
+            }} />
+          ))}
         </div>
-      )}
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 flex-1 flex flex-col px-6 pt-14 pb-8">
+        {isIntro && current ? (
+          <div key={step} className="animate-slide-up flex-1 flex flex-col">
+            <p className="text-[11px] font-bold tracking-[0.2em] uppercase mb-7"
+              style={{ color: current.accent, opacity: 0.65 }}>
+              STEP {current.num}
+            </p>
+
+            <div className="w-[68px] h-[68px] rounded-[1.25rem] flex items-center justify-center mb-8"
+              style={{ background: current.iconBg, border: `1px solid ${current.iconBorder}` }}>
+              <current.Icon size={30} style={{ color: current.iconColor }} />
+            </div>
+
+            <h1 className="font-black leading-[1.08] mb-5" style={{
+              fontSize: '2.15rem', letterSpacing: '-0.035em', whiteSpace: 'pre-line'
+            }}>
+              {current.title}
+            </h1>
+
+            <p className="text-[15px] leading-[1.65]" style={{ color: 'rgba(255,255,255,0.45)', maxWidth: 300 }}>
+              {current.desc}
+            </p>
+
+            <div className="flex-1" />
+
+            <button onClick={handleNext}
+              className="w-full py-[1.05rem] rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
+              style={{
+                background: current.accent,
+                color: '#09090B',
+                boxShadow: `0 8px 24px ${current.accent}28`,
+              }}>
+              {step === STEPS.length - 1 ? '選擇難度' : '繼續'}
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        ) : (
+          /* Difficulty */
+          <div className="animate-slide-up flex-1 flex flex-col">
+            <p className="text-[11px] font-bold tracking-[0.2em] uppercase mb-7"
+              style={{ color: '#a3e635', opacity: 0.65 }}>
+              最後一步
+            </p>
+
+            <h1 className="font-black leading-[1.08] mb-2" style={{ fontSize: '2.1rem', letterSpacing: '-0.035em' }}>
+              選擇難度
+            </h1>
+            <p className="text-[14px] mb-8" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              之後在設定中可以隨時更改
+            </p>
+
+            <div className="space-y-2.5 flex-1">
+              {DIFFICULTIES.map(d => {
+                const active = difficulty === d.key;
+                return (
+                  <button key={d.key} onClick={() => setDifficulty(d.key)}
+                    className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-left transition-all duration-200 active:scale-[0.98]"
+                    style={{
+                      background: active ? d.activeBg : 'rgba(255,255,255,0.03)',
+                      border: `1px solid ${active ? d.activeBorder : 'rgba(255,255,255,0.07)'}`,
+                    }}>
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
+                      style={{ background: active ? d.activeBg : 'rgba(255,255,255,0.04)' }}>
+                      {d.emoji}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2">
+                        <p className="font-semibold text-[15px]" style={{ color: active ? d.color : 'rgba(255,255,255,0.88)' }}>
+                          {d.label}
+                        </p>
+                        <p className="text-[10px] font-bold tracking-widest" style={{ color: 'rgba(255,255,255,0.18)' }}>
+                          {d.labelEn}
+                        </p>
+                      </div>
+                      <p className="text-[12px] mt-0.5 truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                        {d.desc}
+                      </p>
+                    </div>
+                    <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all"
+                      style={{
+                        background: active ? d.color : 'transparent',
+                        border: `2px solid ${active ? d.color : 'rgba(255,255,255,0.15)'}`,
+                      }}>
+                      {active && (
+                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                          <path d="M1 4L3.5 6.5L9 1" stroke="#09090B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <button onClick={handleFinish}
+              className="mt-6 w-full py-[1.05rem] rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
+              style={{
+                background: '#a3e635',
+                color: '#09090B',
+                boxShadow: '0 8px 24px rgba(163,230,53,0.22)',
+              }}>
+              開始破圈
+              <Zap size={16} />
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
