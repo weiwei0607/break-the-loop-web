@@ -183,25 +183,41 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-4 sm:p-6 flex flex-col items-center">
       <Confetti active={showConfetti} count={50} />
       {/* Header */}
-      <header className="w-full max-w-lg mb-8 text-center relative">
+      <header className="w-full max-w-lg mb-8 text-center relative pt-2">
         <div className="absolute right-0 top-0 flex gap-2">
           <button
             onClick={() => setShowSettings(s => !s)}
-            className="p-2 rounded-xl bg-zinc-900 text-zinc-500 hover:text-zinc-300 transition-colors"
+            className="p-2 rounded-xl bg-zinc-900/80 text-zinc-500 hover:text-zinc-300 border border-zinc-800/60 transition-all hover:border-zinc-700"
             aria-label="設定"
           >
             <SettingsIcon className="w-4 h-4" />
           </button>
         </div>
-        <h1 className="text-4xl font-black tracking-tighter text-brand-light mb-2">
+        <h1
+          className="text-[2.6rem] font-black tracking-[-0.04em] text-brand-light mb-1.5 animate-brand-glow"
+          style={{ letterSpacing: '-0.04em' }}
+        >
           BreakTheLoop
         </h1>
-        <p className="text-zinc-500 text-sm font-medium tracking-widest uppercase">
+        <p className="text-zinc-600 text-[11px] font-bold tracking-[0.22em] uppercase">
           生活破圈器
         </p>
-        <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-900 border border-zinc-800">
-          <Flame className="w-4 h-4 text-orange-500" />
-          <span className="text-sm font-bold text-zinc-300">連續破圈 <span className="text-orange-400">{streak}</span> 天</span>
+        <div
+          className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full"
+          style={{
+            background: 'rgba(249,115,22,0.08)',
+            border: '1px solid rgba(249,115,22,0.2)',
+            boxShadow: streak > 0 ? '0 0 16px rgba(249,115,22,0.12)' : 'none',
+          }}
+        >
+          <Flame className={`w-4 h-4 text-orange-500 ${streak > 0 ? 'animate-flame' : ''}`} />
+          <span className="text-sm font-bold text-zinc-300">
+            連續破圈{' '}
+            <span className="text-orange-400" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {streak}
+            </span>{' '}
+            天
+          </span>
         </div>
       </header>
 

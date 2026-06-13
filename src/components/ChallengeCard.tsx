@@ -9,9 +9,30 @@ interface Props {
 }
 
 const difficultyConfig = {
-  easy: { label: '簡單', color: 'bg-green-500', shadow: 'shadow-green-500/50' },
-  medium: { label: '中等', color: 'bg-orange-500', shadow: 'shadow-orange-500/50' },
-  hard: { label: '困難', color: 'bg-red-500', shadow: 'shadow-red-500/50' }
+  easy: {
+    label: '簡單',
+    color: 'bg-green-500',
+    shadow: 'shadow-green-500/50',
+    gradient: 'linear-gradient(135deg, #22c55e 0%, #16a34a 60%, #15803d 100%)',
+    glow: 'rgba(34,197,94,0.45)',
+    badgeBg: '#22c55e',
+  },
+  medium: {
+    label: '中等',
+    color: 'bg-orange-500',
+    shadow: 'shadow-orange-500/50',
+    gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 60%, #c2410c 100%)',
+    glow: 'rgba(249,115,22,0.45)',
+    badgeBg: '#f97316',
+  },
+  hard: {
+    label: '困難',
+    color: 'bg-red-500',
+    shadow: 'shadow-red-500/50',
+    gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 60%, #b91c1c 100%)',
+    glow: 'rgba(239,68,68,0.45)',
+    badgeBg: '#ef4444',
+  },
 };
 
 const isValidTime = (value: string): boolean => {
@@ -70,24 +91,51 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
       >
         {/* 正面 */}
         <div
-          className={[
-            'absolute inset-0 flex flex-col items-center justify-center rounded-2xl border-4 border-white/20 shadow-2xl [backface-visibility:hidden]',
-            config.color,
-            config.shadow
-          ].join(' ')}
+          className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl [backface-visibility:hidden] overflow-hidden"
+          style={{
+            background: config.gradient,
+            boxShadow: `0 24px 60px ${config.glow}, 0 8px 20px rgba(0,0,0,0.4)`,
+            border: '1px solid rgba(255,255,255,0.15)',
+          }}
         >
-          <div className="text-6xl mb-4">?</div>
-          <div className="text-2xl font-bold tracking-widest text-white">{config.label}挑戰</div>
-          <div className="mt-8 text-sm text-white/60 animate-pulse">點擊翻開命運</div>
+          {/* Dot-grid texture overlay */}
+          <div className="absolute inset-0 dot-grid opacity-25 pointer-events-none" />
+          {/* Center radial highlight */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-52 h-52 rounded-full opacity-20"
+              style={{ background: 'radial-gradient(circle, white 0%, transparent 70%)', filter: 'blur(24px)' }} />
+          </div>
+          {/* Top shine */}
+          <div className="absolute top-0 left-0 right-0 h-1/3 rounded-t-2xl pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, transparent 100%)' }} />
+
+          <div className="relative z-10 text-[5rem] font-black text-white leading-none mb-3"
+            style={{ textShadow: '0 4px 20px rgba(0,0,0,0.3), 0 0 40px rgba(255,255,255,0.2)' }}>
+            ?
+          </div>
+          <div className="relative z-10 text-xl font-black tracking-[0.12em] text-white"
+            style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+            {config.label}挑戰
+          </div>
+          <div className="relative z-10 mt-6 px-4 py-1.5 rounded-full text-xs font-bold text-white/70 tracking-widest animate-pulse"
+            style={{ background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.15)' }}>
+            點擊翻開命運
+          </div>
         </div>
 
         {/* 背面 */}
         <div
-          className="absolute inset-0 flex flex-col items-center justify-between p-6 rounded-2xl bg-zinc-900 border-4 border-white/10 [transform:rotateY(180deg)] [backface-visibility:hidden]"
+          className="absolute inset-0 flex flex-col items-center justify-between p-6 rounded-2xl [transform:rotateY(180deg)] [backface-visibility:hidden]"
+          style={{
+            background: 'linear-gradient(160deg, #18181b 0%, #0f0f12 100%)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+          }}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="w-full text-center">
-            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase text-white ${config.color}`}>
+            <span className="px-3 py-1 rounded-full text-xs font-black uppercase text-white"
+              style={{ background: config.badgeBg, boxShadow: `0 4px 12px ${config.glow}` }}>
               {config.label}
             </span>
             <p className="mt-8 text-xl font-medium leading-relaxed text-zinc-100">
