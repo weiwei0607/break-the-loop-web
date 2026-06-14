@@ -26,7 +26,7 @@ export function SplashScreen({ onDone }: Props) {
       trail: { x: number; y: number }[];
     };
 
-    const colors = ['#a3e635', '#84cc16', '#ffffff', '#d9f99d', '#65a30d'];
+    const colors = ['#8b9d7a', '#9aab86', '#d3d8c8', '#d8ddc9', '#6f815f'];
     const particles: Particle[] = [];
 
     function spawnRing(t: number) {
@@ -62,7 +62,7 @@ export function SplashScreen({ onDone }: Props) {
           vy: (Math.random() - 0.5) * 4,
           life: 1, maxLife: 0.3 + Math.random() * 0.4,
           size: 1 + Math.random() * 1.5,
-          color: '#a3e635',
+          color: '#8b9d7a',
           trail: [],
         });
       }
@@ -75,19 +75,20 @@ export function SplashScreen({ onDone }: Props) {
 
     let raf: number;
     function draw(now: number) {
+      if (!ctx) return;
       const elapsed = now - startTime;
       const t = Math.min(elapsed / DURATION, 1);
 
       ctx.clearRect(0, 0, W, H);
 
       // Background
-      ctx.fillStyle = '#09090B';
+      ctx.fillStyle = '#f5f0e5';
       ctx.fillRect(0, 0, W, H);
 
       // Ambient center glow
       const glowR = 80 + Math.sin(frame * 0.06) * 20;
       const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR * (1 + t));
-      grd.addColorStop(0, `rgba(163,230,53,${0.18 * (1 - t * 0.5)})`);
+      grd.addColorStop(0, `rgba(139,157,122,${0.18 * (1 - t * 0.5)})`);
       grd.addColorStop(1, 'transparent');
       ctx.fillStyle = grd;
       ctx.fillRect(0, 0, W, H);
@@ -141,7 +142,7 @@ export function SplashScreen({ onDone }: Props) {
         const alpha = (1 - phase) * 0.15;
         ctx.beginPath();
         ctx.arc(cx, cy, ringRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(163,230,53,${alpha})`;
+        ctx.strokeStyle = `rgba(139,157,122,${alpha})`;
         ctx.lineWidth = 1.5;
         ctx.stroke();
       }
@@ -150,7 +151,7 @@ export function SplashScreen({ onDone }: Props) {
       const ringSize = 40 + Math.sin(frame * 0.08) * 5;
       ctx.beginPath();
       ctx.arc(cx, cy, ringSize, 0.3, Math.PI * 2 - 0.3);
-      ctx.strokeStyle = `rgba(163,230,53,${0.8 - t * 0.5})`;
+      ctx.strokeStyle = `rgba(139,157,122,${0.8 - t * 0.5})`;
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -160,11 +161,11 @@ export function SplashScreen({ onDone }: Props) {
         ctx.save();
         ctx.globalAlpha = textAlpha;
         ctx.font = `bold ${Math.round(W * 0.07)}px Inter, sans-serif`;
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = '#d3d8c8';
         ctx.textAlign = 'center';
         ctx.fillText('BreakTheLoop', cx, cy - 8);
         ctx.font = `${Math.round(W * 0.035)}px Inter, sans-serif`;
-        ctx.fillStyle = '#a3e635';
+        ctx.fillStyle = '#8b9d7a';
         ctx.fillText('打破你的舒適圈', cx, cy + 28);
         ctx.restore();
       }
@@ -172,7 +173,7 @@ export function SplashScreen({ onDone }: Props) {
       // Fade out at end
       if (t > 0.75) {
         const fadeAlpha = (t - 0.75) / 0.25;
-        ctx.fillStyle = `rgba(9,9,11,${fadeAlpha})`;
+        ctx.fillStyle = `rgba(250,247,240,${fadeAlpha})`;
         ctx.fillRect(0, 0, W, H);
       }
 

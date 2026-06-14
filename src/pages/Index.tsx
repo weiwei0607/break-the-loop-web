@@ -205,9 +205,9 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
         <div
           className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full"
           style={{
-            background: 'rgba(249,115,22,0.08)',
-            border: '1px solid rgba(249,115,22,0.2)',
-            boxShadow: streak > 0 ? '0 0 16px rgba(249,115,22,0.12)' : 'none',
+            background: 'rgba(184,131,95,0.08)',
+            border: '1px solid rgba(184,131,95,0.2)',
+            boxShadow: streak > 0 ? '0 0 16px rgba(184,131,95,0.12)' : 'none',
           }}
         >
           <Flame className={`w-4 h-4 text-orange-500 ${streak > 0 ? 'animate-flame' : ''}`} />
@@ -235,7 +235,7 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
                     onClick={() => handleChangeDifficulty(d)}
                     className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${
                       settings.preferredDifficulty === d
-                        ? 'bg-brand-light text-zinc-900'
+                        ? 'bg-brand-light text-white'
                         : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                     }`}
                   >
@@ -252,11 +252,11 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
                   value={apiKeyInput}
                   onChange={e => setApiKeyInput(e.target.value)}
                   placeholder="AIzaSy..."
-                  className="flex-1 h-9 px-3 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-xs font-mono focus:outline-none focus:border-brand-light"
+                  className="flex-1 h-9 px-3 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 text-xs font-mono focus:outline-none focus:border-brand-light"
                 />
                 <button
                   onClick={() => { saveApiKey(apiKeyInput); }}
-                  className="px-3 py-1.5 rounded-xl bg-brand-light text-zinc-900 text-xs font-bold hover:opacity-90"
+                  className="px-3 py-1.5 rounded-xl bg-brand-light text-white text-xs font-bold hover:opacity-90"
                 >儲存</button>
               </div>
             </div>
@@ -354,7 +354,7 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
                     onChange={e => setFeelingText(e.target.value)}
                     placeholder="今天完成這個挑戰的感覺怎麼樣？有什麼發現嗎？"
                     rows={3}
-                    className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-white text-xs resize-none focus:outline-none focus:border-brand-light placeholder:text-zinc-600"
+                    className="w-full px-3 py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-100 text-xs resize-none focus:outline-none focus:border-brand-light placeholder:text-zinc-600"
                   />
                   {!getApiKey() && (
                     <p className="text-xs text-zinc-600">
@@ -387,7 +387,7 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
       </main>
 
       {/* Footer Nav */}
-      <footer className="w-full max-w-lg mt-12 py-6 border-t border-white/5 flex justify-center gap-8">
+      <footer className="w-full max-w-lg mt-12 py-6 border-t border-black/5 flex justify-center gap-8">
         <button
           onClick={onGoToPassbook}
           className="text-xs font-bold tracking-widest uppercase text-zinc-600 hover:text-brand-light transition-all flex items-center gap-2"

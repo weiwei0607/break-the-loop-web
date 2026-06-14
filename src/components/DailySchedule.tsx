@@ -58,11 +58,11 @@ export const DailySchedule: React.FC<Props> = ({ challengeText, challengeTime, o
       {/* 時程表區 */}
       <section className="space-y-4">
         <div className="flex items-center gap-4">
-          <div className="h-px flex-1 bg-white/10" />
+          <div className="h-px flex-1 bg-black/10" />
           <h2 className="text-zinc-500 tracking-widest text-sm font-bold uppercase">
             今日時程
           </h2>
-          <div className="h-px flex-1 bg-white/10" />
+          <div className="h-px flex-1 bg-black/10" />
         </div>
 
         <div className="space-y-2">
@@ -73,7 +73,7 @@ export const DailySchedule: React.FC<Props> = ({ challengeText, challengeTime, o
                 'flex items-center gap-4 p-4 rounded-xl transition-all',
                 item.isChallenge
                   ? 'bg-brand-light/10 border border-brand-light/30 ring-1 ring-brand-light/20'
-                  : 'bg-white/5',
+                  : 'bg-black/[0.04]',
               ].join(' ')}
             >
               <div className="text-zinc-500 font-mono text-sm w-14 shrink-0 flex items-center gap-1">
@@ -88,7 +88,7 @@ export const DailySchedule: React.FC<Props> = ({ challengeText, challengeTime, o
               >
                 {item.activity}
                 {item.isChallenge && (
-                  <span className="ml-2 text-[10px] bg-brand-light text-zinc-900 px-1.5 py-0.5 rounded-sm font-bold">
+                  <span className="ml-2 text-[10px] bg-brand-light text-white px-1.5 py-0.5 rounded-sm font-bold">
                     挑戰
                   </span>
                 )}
@@ -106,11 +106,11 @@ export const DailySchedule: React.FC<Props> = ({ challengeText, challengeTime, o
       {/* 完成按鈕 */}
       <section className="space-y-4">
         <div className="flex items-center gap-4">
-          <div className="h-px flex-1 bg-white/10" />
+          <div className="h-px flex-1 bg-black/10" />
           <h2 className="text-zinc-500 tracking-widest text-sm font-bold uppercase">
             完成打卡
           </h2>
-          <div className="h-px flex-1 bg-white/10" />
+          <div className="h-px flex-1 bg-black/10" />
         </div>
 
         <button
@@ -120,7 +120,7 @@ export const DailySchedule: React.FC<Props> = ({ challengeText, challengeTime, o
             'w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-lg transition-all',
             isCompleted
               ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-              : 'bg-brand-light text-zinc-900 hover:bg-brand-light/90 active:scale-[0.98]',
+              : 'bg-brand-light text-white hover:bg-brand-light/90 active:scale-[0.98]',
           ].join(' ')}
         >
           {isCompleted ? (

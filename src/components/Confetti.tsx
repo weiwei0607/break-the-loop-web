@@ -11,13 +11,13 @@ interface Particle {
 }
 
 const COLORS = [
-  '#a3e635', // brand-light
-  '#fb923c', // orange
-  '#4ade80', // green
-  '#f9a8d4', // pink
-  '#60a5fa', // blue
-  '#fde68a', // yellow
-  '#c084fc', // purple
+  '#8b9d7a', // brand-light
+  '#b8835f', // orange
+  '#8b9d7a', // green
+  '#cdab8e', // pink
+  '#a6b794', // blue
+  '#d8ddc9', // yellow
+  '#a98a92', // purple
 ];
 
 function generateParticles(count: number): Particle[] {

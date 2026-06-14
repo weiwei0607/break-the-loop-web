@@ -45,7 +45,7 @@ export const DifficultyButton: React.FC<Props> = ({ difficulty, onSelect }) => {
   return (
     <button
       onClick={handleClick}
-      className="group relative overflow-hidden bg-zinc-900 border border-white/5 p-6 rounded-2xl flex items-center justify-between transition-all hover:bg-zinc-800 hover:border-white/10 focus:outline-none focus:ring-2 focus:ring-brand-light/50"
+      className="group relative overflow-hidden bg-zinc-900 border border-black/5 p-6 rounded-2xl flex items-center justify-between transition-all hover:bg-zinc-800 hover:border-black/10 focus:outline-none focus:ring-2 focus:ring-brand-light/50"
     >
       <div className="flex flex-col items-start">
         <span className={`${cfg.color} font-bold uppercase text-xs tracking-widest mb-1`}>

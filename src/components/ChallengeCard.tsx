@@ -8,30 +8,31 @@ interface Props {
   onReject: () => void;
 }
 
+// 「呼吸」調性：難度用柔和大地色（鼠尾草 / 陶土 / 暮玫瑰），不再是紅綠燈警示色
 const difficultyConfig = {
   easy: {
     label: '簡單',
-    color: 'bg-green-500',
-    shadow: 'shadow-green-500/50',
-    gradient: 'linear-gradient(135deg, #22c55e 0%, #16a34a 60%, #15803d 100%)',
-    glow: 'rgba(34,197,94,0.45)',
-    badgeBg: '#22c55e',
+    color: 'bg-brand-light',
+    shadow: 'shadow-black/10',
+    gradient: 'linear-gradient(150deg, #a6b794 0%, #8b9d7a 100%)',
+    glow: 'rgba(139,157,122,0.28)',
+    badgeBg: '#8b9d7a',
   },
   medium: {
     label: '中等',
     color: 'bg-orange-500',
-    shadow: 'shadow-orange-500/50',
-    gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 60%, #c2410c 100%)',
-    glow: 'rgba(249,115,22,0.45)',
-    badgeBg: '#f97316',
+    shadow: 'shadow-black/10',
+    gradient: 'linear-gradient(150deg, #cdab8e 0%, #b8835f 100%)',
+    glow: 'rgba(184,131,95,0.28)',
+    badgeBg: '#b8835f',
   },
   hard: {
     label: '困難',
     color: 'bg-red-500',
-    shadow: 'shadow-red-500/50',
-    gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 60%, #b91c1c 100%)',
-    glow: 'rgba(239,68,68,0.45)',
-    badgeBg: '#ef4444',
+    shadow: 'shadow-black/10',
+    gradient: 'linear-gradient(150deg, #c39a93 0%, #a86f68 100%)',
+    glow: 'rgba(168,111,104,0.26)',
+    badgeBg: '#a86f68',
   },
 };
 
@@ -94,8 +95,8 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
           className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl [backface-visibility:hidden] overflow-hidden"
           style={{
             background: config.gradient,
-            boxShadow: `0 24px 60px ${config.glow}, 0 8px 20px rgba(0,0,0,0.4)`,
-            border: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: `0 16px 44px ${config.glow}, 0 4px 14px rgba(120,90,60,0.14)`,
+            border: '1px solid rgba(255,255,255,0.22)',
           }}
         >
           {/* Dot-grid texture overlay */}
@@ -110,7 +111,7 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
             style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, transparent 100%)' }} />
 
           <div className="relative z-10 text-[5rem] font-black text-white leading-none mb-3"
-            style={{ textShadow: '0 4px 20px rgba(0,0,0,0.3), 0 0 40px rgba(255,255,255,0.2)' }}>
+            style={{ textShadow: '0 2px 14px rgba(80,60,40,0.18)' }}>
             ?
           </div>
           <div className="relative z-10 text-xl font-black tracking-[0.12em] text-white"
@@ -127,9 +128,9 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
         <div
           className="absolute inset-0 flex flex-col items-center justify-between p-6 rounded-2xl [transform:rotateY(180deg)] [backface-visibility:hidden]"
           style={{
-            background: 'linear-gradient(160deg, #18181b 0%, #0f0f12 100%)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+            background: 'linear-gradient(160deg, #fbf7ee 0%, #efe7d8 100%)',
+            border: '1px solid rgba(120,90,60,0.12)',
+            boxShadow: '0 12px 40px rgba(120,90,60,0.12)',
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -155,7 +156,7 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
                 maxLength={4}
                 placeholder="輸入四位數字"
                 className={[
-                  'w-full bg-zinc-800 border-none rounded-lg p-3 text-white transition-all outline-none',
+                  'w-full bg-zinc-800 border-none rounded-lg p-3 text-zinc-100 transition-all outline-none',
                   'focus:ring-2 focus:ring-brand-light',
                   shake ? 'animate-shake ring-2 ring-red-500' : ''
                 ].join(' ')}
@@ -172,13 +173,13 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
               <button
                 onClick={handleAccept}
                 disabled={timeInput.length !== 4}
-                className="flex-1 bg-brand-light hover:bg-brand-light/80 disabled:opacity-30 disabled:cursor-not-allowed text-zinc-900 font-bold py-3 rounded-xl transition-all"
+                className="flex-1 bg-brand-light hover:bg-brand/90 disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all"
               >
                 接受挑戰
               </button>
               <button
                 onClick={handleReject}
-                className="px-4 py-3 rounded-xl border border-white/10 text-zinc-400 hover:bg-white/5 transition-all"
+                className="px-4 py-3 rounded-xl border border-black/10 text-zinc-400 hover:bg-black/5 transition-all"
               >
                 放棄
               </button>

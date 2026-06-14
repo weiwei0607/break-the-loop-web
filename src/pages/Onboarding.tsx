@@ -10,32 +10,32 @@ const STEPS = [
   {
     num: '01',
     Icon: Zap,
-    iconColor: '#a3e635',
-    iconBg: 'rgba(163,230,53,0.10)',
-    iconBorder: 'rgba(163,230,53,0.18)',
+    iconColor: '#8b9d7a',
+    iconBg: 'rgba(139,157,122,0.10)',
+    iconBorder: 'rgba(139,157,122,0.18)',
     title: '每天只需\n2 分鐘',
     desc: '每天抽一張身體覺察任務，打破無意識的慣性循環，讓生活重新有感。',
-    accent: '#a3e635',
+    accent: '#8b9d7a',
   },
   {
     num: '02',
     Icon: Clock,
-    iconColor: '#fb923c',
+    iconColor: '#b8835f',
     iconBg: 'rgba(251,146,60,0.10)',
     iconBorder: 'rgba(251,146,60,0.18)',
     title: '嵌入你的\n時程表',
     desc: '翻開卡片後輸入預計完成時間（例如 1830），挑戰自動插入今日行程。',
-    accent: '#fb923c',
+    accent: '#b8835f',
   },
   {
     num: '03',
     Icon: Sparkles,
-    iconColor: '#c084fc',
+    iconColor: '#a98a92',
     iconBg: 'rgba(192,132,252,0.10)',
     iconBorder: 'rgba(192,132,252,0.18)',
     title: 'AI 陪你\n反思成長',
     desc: '完成後分享感受，AI 給你個性化的鼓勵和一個值得思考的問題。',
-    accent: '#c084fc',
+    accent: '#a98a92',
   },
 ];
 
@@ -46,9 +46,9 @@ const DIFFICULTIES = [
     label: '簡單',
     labelEn: 'EASY',
     desc: '5–10 分鐘，身體覺察小動作',
-    color: '#22c55e',
-    activeBorder: 'rgba(34,197,94,0.5)',
-    activeBg: 'rgba(34,197,94,0.08)',
+    color: '#8b9d7a',
+    activeBorder: 'rgba(139,157,122,0.5)',
+    activeBg: 'rgba(139,157,122,0.08)',
   },
   {
     key: 'medium' as const,
@@ -56,9 +56,9 @@ const DIFFICULTIES = [
     label: '中等',
     labelEn: 'MEDIUM',
     desc: '20–40 分鐘，需要行動力',
-    color: '#f97316',
-    activeBorder: 'rgba(249,115,22,0.5)',
-    activeBg: 'rgba(249,115,22,0.08)',
+    color: '#b8835f',
+    activeBorder: 'rgba(184,131,95,0.5)',
+    activeBg: 'rgba(184,131,95,0.08)',
   },
   {
     key: 'hard' as const,
@@ -66,9 +66,9 @@ const DIFFICULTIES = [
     label: '困難',
     labelEn: 'HARD',
     desc: '跨出舒適圈的深度挑戰',
-    color: '#ef4444',
-    activeBorder: 'rgba(239,68,68,0.5)',
-    activeBg: 'rgba(239,68,68,0.08)',
+    color: '#a86f68',
+    activeBorder: 'rgba(168,111,104,0.5)',
+    activeBg: 'rgba(168,111,104,0.08)',
   },
 ];
 
@@ -88,12 +88,12 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
 
   return (
     <div className="min-h-screen text-zinc-100 flex flex-col relative overflow-hidden"
-      style={{ background: '#09090B' }}>
+      style={{ background: '#f5f0e5' }}>
 
       {/* Ambient color glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[280px] pointer-events-none transition-all duration-700"
         style={{
-          background: `radial-gradient(ellipse, ${isIntro ? current!.accent : '#a3e635'}0D 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse, ${isIntro ? current!.accent : '#8b9d7a'}0D 0%, transparent 70%)`,
           filter: 'blur(60px)',
         }} />
 
@@ -101,8 +101,8 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
       <div className="relative z-10 px-6 pt-14 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-xl flex items-center justify-center"
-            style={{ background: 'rgba(163,230,53,0.12)', border: '1px solid rgba(163,230,53,0.2)' }}>
-            <Zap size={14} style={{ color: '#a3e635' }} />
+            style={{ background: 'rgba(139,157,122,0.12)', border: '1px solid rgba(139,157,122,0.2)' }}>
+            <Zap size={14} style={{ color: '#8b9d7a' }} />
           </div>
           <span className="text-[13px] font-semibold text-zinc-500">BreakTheLoop</span>
         </div>
@@ -114,8 +114,8 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
               width: i === step ? 18 : 6,
               height: 6,
               background: i === step
-                ? (isIntro ? current!.accent : '#a3e635')
-                : i < step ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.08)',
+                ? (isIntro ? current!.accent : '#8b9d7a')
+                : i < step ? 'rgba(58,51,39,0.25)' : 'rgba(58,51,39,0.08)',
             }} />
           ))}
         </div>
@@ -141,7 +141,7 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
               {current.title}
             </h1>
 
-            <p className="text-[15px] leading-[1.65]" style={{ color: 'rgba(255,255,255,0.45)', maxWidth: 300 }}>
+            <p className="text-[15px] leading-[1.65]" style={{ color: 'rgba(58,51,39,0.45)', maxWidth: 300 }}>
               {current.desc}
             </p>
 
@@ -151,7 +151,7 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
               className="w-full py-[1.05rem] rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
               style={{
                 background: current.accent,
-                color: '#09090B',
+                color: '#ffffff',
                 boxShadow: `0 8px 24px ${current.accent}28`,
               }}>
               {step === STEPS.length - 1 ? '選擇難度' : '繼續'}
@@ -162,14 +162,14 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
           /* Difficulty */
           <div className="animate-slide-up flex-1 flex flex-col">
             <p className="text-[11px] font-bold tracking-[0.2em] uppercase mb-7"
-              style={{ color: '#a3e635', opacity: 0.65 }}>
+              style={{ color: '#8b9d7a', opacity: 0.65 }}>
               最後一步
             </p>
 
             <h1 className="font-black leading-[1.08] mb-2" style={{ fontSize: '2.1rem', letterSpacing: '-0.035em' }}>
               選擇難度
             </h1>
-            <p className="text-[14px] mb-8" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            <p className="text-[14px] mb-8" style={{ color: 'rgba(58,51,39,0.35)' }}>
               之後在設定中可以隨時更改
             </p>
 
@@ -180,34 +180,34 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
                   <button key={d.key} onClick={() => setDifficulty(d.key)}
                     className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-left transition-all duration-200 active:scale-[0.98]"
                     style={{
-                      background: active ? d.activeBg : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${active ? d.activeBorder : 'rgba(255,255,255,0.07)'}`,
+                      background: active ? d.activeBg : 'rgba(58,51,39,0.03)',
+                      border: `1px solid ${active ? d.activeBorder : 'rgba(58,51,39,0.07)'}`,
                     }}>
                     <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
-                      style={{ background: active ? d.activeBg : 'rgba(255,255,255,0.04)' }}>
+                      style={{ background: active ? d.activeBg : 'rgba(58,51,39,0.04)' }}>
                       {d.emoji}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-baseline gap-2">
-                        <p className="font-semibold text-[15px]" style={{ color: active ? d.color : 'rgba(255,255,255,0.88)' }}>
+                        <p className="font-semibold text-[15px]" style={{ color: active ? d.color : 'rgba(58,51,39,0.88)' }}>
                           {d.label}
                         </p>
-                        <p className="text-[10px] font-bold tracking-widest" style={{ color: 'rgba(255,255,255,0.18)' }}>
+                        <p className="text-[10px] font-bold tracking-widest" style={{ color: 'rgba(58,51,39,0.18)' }}>
                           {d.labelEn}
                         </p>
                       </div>
-                      <p className="text-[12px] mt-0.5 truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                      <p className="text-[12px] mt-0.5 truncate" style={{ color: 'rgba(58,51,39,0.35)' }}>
                         {d.desc}
                       </p>
                     </div>
                     <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all"
                       style={{
                         background: active ? d.color : 'transparent',
-                        border: `2px solid ${active ? d.color : 'rgba(255,255,255,0.15)'}`,
+                        border: `2px solid ${active ? d.color : 'rgba(58,51,39,0.15)'}`,
                       }}>
                       {active && (
                         <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                          <path d="M1 4L3.5 6.5L9 1" stroke="#09090B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M1 4L3.5 6.5L9 1" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       )}
                     </div>
@@ -219,9 +219,9 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
             <button onClick={handleFinish}
               className="mt-6 w-full py-[1.05rem] rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
               style={{
-                background: '#a3e635',
-                color: '#09090B',
-                boxShadow: '0 8px 24px rgba(163,230,53,0.22)',
+                background: '#8b9d7a',
+                color: '#ffffff',
+                boxShadow: '0 8px 24px rgba(139,157,122,0.22)',
               }}>
               開始破圈
               <Zap size={16} />
