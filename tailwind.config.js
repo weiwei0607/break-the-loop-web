@@ -4,7 +4,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'Noto Sans TC', 'sans-serif'],
+        sans: ['"Noto Sans TC"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['"Fraunces"', '"Noto Serif TC"', 'Georgia', 'serif'],
+        display: ['"Fraunces"', '"Noto Serif TC"', 'serif'],
       },
       colors: {
         // 「呼吸」設計理念：暖奶油 + 鼠尾草綠。把 zinc 數階「反相」——

@@ -113,7 +113,7 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
           <div className="absolute top-0 left-0 right-0 h-1/3 rounded-t-2xl pointer-events-none"
             style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.18) 0%, transparent 100%)' }} />
 
-          <div className="relative z-10 text-[5rem] font-black text-white leading-none mb-3"
+          <div className="relative z-10 font-serif text-[5rem] font-medium text-white leading-none mb-3"
             style={{ textShadow: '0 2px 14px rgba(80,60,40,0.18)' }}>
             ?
           </div>
@@ -145,7 +145,7 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
               style={{ background: config.badgeBg, boxShadow: `0 4px 12px ${config.glow}` }}>
               {config.label}
             </span>
-            <p className="mt-8 text-xl font-medium leading-relaxed text-zinc-100">
+            <p className="mt-8 font-serif text-[1.35rem] font-medium leading-relaxed text-zinc-100">
               {challenge.text}
             </p>
           </div>

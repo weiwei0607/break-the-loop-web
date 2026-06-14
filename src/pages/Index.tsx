@@ -180,40 +180,37 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
     : null;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 p-4 sm:p-6 flex flex-col items-center">
+    <div className="min-h-screen flex justify-center items-stretch sm:items-start sm:py-10 px-0 sm:px-6">
       <Confetti active={showConfetti} count={50} />
+      <div className="relative w-full sm:max-w-[440px] flex flex-col bg-[#fbf7ef] sm:rounded-[30px] sm:border sm:border-black/[0.06] sm:shadow-[0_24px_70px_-22px_rgba(120,90,60,0.30)] px-6 sm:px-8 pt-8 pb-9 min-h-screen sm:min-h-0">
       {/* Header */}
-      <header className="w-full max-w-lg mb-8 text-center relative pt-2">
+      <header className="mb-7 text-center relative">
         <div className="absolute right-0 top-0 flex gap-2">
           <button
             onClick={() => setShowSettings(s => !s)}
-            className="p-2 rounded-xl bg-zinc-900/80 text-zinc-500 hover:text-zinc-300 border border-zinc-800/60 transition-all hover:border-zinc-700"
+            className="p-2 rounded-xl bg-black/[0.03] text-zinc-500 hover:text-zinc-300 border border-black/[0.06] transition-all hover:bg-black/[0.05]"
             aria-label="設定"
           >
             <SettingsIcon className="w-4 h-4" />
           </button>
         </div>
-        <h1
-          className="text-[2.6rem] font-black tracking-[-0.04em] text-brand-light mb-1.5 animate-brand-glow"
-          style={{ letterSpacing: '-0.04em' }}
-        >
+        <h1 className="font-serif text-[2.1rem] sm:text-[2.4rem] font-medium tracking-tight text-brand mb-1 animate-brand-glow">
           BreakTheLoop
         </h1>
-        <p className="text-zinc-600 text-[11px] font-bold tracking-[0.22em] uppercase">
+        <p className="text-zinc-500 text-[11px] font-medium tracking-[0.32em] uppercase">
           生活破圈器
         </p>
         <div
-          className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full"
+          className="mt-5 inline-flex items-center gap-2 px-4 py-1.5 rounded-full"
           style={{
             background: 'rgba(184,131,95,0.08)',
-            border: '1px solid rgba(184,131,95,0.2)',
-            boxShadow: streak > 0 ? '0 0 16px rgba(184,131,95,0.12)' : 'none',
+            border: '1px solid rgba(184,131,95,0.18)',
           }}
         >
-          <Sprout className="w-4 h-4" style={{ color: '#8b9d7a' }} />
-          <span className="text-sm font-bold text-zinc-300">
+          <Sprout className="w-3.5 h-3.5" style={{ color: '#8b9d7a' }} />
+          <span className="text-[13px] text-zinc-400">
             連續破圈{' '}
-            <span className="text-orange-400" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <span className="font-serif text-zinc-200" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {streak}
             </span>{' '}
             天
@@ -223,7 +220,7 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
 
       {/* Settings Panel */}
       {showSettings && settings && (
-        <div className="w-full max-w-lg mb-6 animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="w-full mb-6 animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-5 space-y-4">
             <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider">偏好設定</h3>
             <div>
@@ -265,7 +262,7 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
       )}
 
       {/* Main Content */}
-      <main className="w-full max-w-lg flex flex-col items-center flex-1">
+      <main className="w-full flex flex-col items-center flex-1">
         {step === 'loading' && (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="w-8 h-8 border-2 border-brand-light border-t-transparent rounded-full animate-spin" />
@@ -313,10 +310,10 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
               </svg>
             </div>
             <h2
-              className="text-2xl font-bold text-zinc-100 mb-2"
+              className="font-serif text-[1.7rem] font-medium text-zinc-100 mb-2"
               style={{ animation: 'fadeIn 0.5s ease-out 0.3s both' }}
             >
-              今日挑戰已完成！
+              今日挑戰已完成
             </h2>
             <p
               className="text-zinc-500 text-sm mb-6 text-center px-4"
@@ -387,15 +384,16 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
       </main>
 
       {/* Footer Nav */}
-      <footer className="w-full max-w-lg mt-12 py-6 border-t border-black/5 flex justify-center gap-8">
+      <footer className="w-full mt-auto pt-7 border-t border-black/[0.06] flex justify-center gap-8">
         <button
           onClick={onGoToPassbook}
-          className="text-xs font-bold tracking-widest uppercase text-zinc-600 hover:text-brand-light transition-all flex items-center gap-2"
+          className="text-[11px] font-medium tracking-[0.2em] uppercase text-zinc-500 hover:text-brand transition-all flex items-center gap-2"
         >
           <BookOpen className="w-4 h-4" />
           任務存摺
         </button>
       </footer>
+      </div>
     </div>
   );
 };

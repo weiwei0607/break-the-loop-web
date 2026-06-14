@@ -83,7 +83,7 @@ export const Passbook: React.FC<Props> = ({ onBack }) => {
         style={{ background: 'radial-gradient(ellipse, rgba(139,157,122,0.05) 0%, transparent 70%)', filter: 'blur(60px)' }} />
 
       {/* Header */}
-      <header className="relative z-10 px-5 pt-14 pb-6">
+      <header className="relative z-10 px-5 pt-14 pb-6 max-w-lg mx-auto w-full">
         <button onClick={onBack}
           className="flex items-center gap-2 mb-8 active:opacity-70 transition-opacity"
           style={{ color: 'rgba(58,51,39,0.4)' }}>
@@ -97,7 +97,7 @@ export const Passbook: React.FC<Props> = ({ onBack }) => {
               style={{ color: '#8b9d7a', opacity: 0.65 }}>
               MY JOURNEY
             </p>
-            <h1 className="font-black leading-none" style={{ fontSize: '2.1rem', letterSpacing: '-0.035em' }}>
+            <h1 className="font-serif font-medium leading-none" style={{ fontSize: '2.1rem', letterSpacing: '-0.035em' }}>
               任務存摺
             </h1>
             <p className="text-[13px] mt-1.5" style={{ color: 'rgba(58,51,39,0.35)' }}>
@@ -145,7 +145,7 @@ export const Passbook: React.FC<Props> = ({ onBack }) => {
                   {label}
                 </span>
               </div>
-              <p className="font-black relative z-10" style={{ fontSize: '2rem', letterSpacing: '-0.04em', lineHeight: 1 }}>
+              <p className="font-serif font-medium relative z-10" style={{ fontSize: '2rem', letterSpacing: '-0.04em', lineHeight: 1 }}>
                 {value}
                 <span className="text-[14px] font-medium ml-1" style={{ color: 'rgba(58,51,39,0.35)' }}>{unit}</span>
               </p>

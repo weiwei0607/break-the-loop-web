@@ -135,7 +135,7 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
               <current.Icon size={30} style={{ color: current.iconColor }} />
             </div>
 
-            <h1 className="font-black leading-[1.08] mb-5" style={{
+            <h1 className="font-serif font-medium leading-[1.08] mb-5" style={{
               fontSize: '2.15rem', letterSpacing: '-0.035em', whiteSpace: 'pre-line'
             }}>
               {current.title}
@@ -166,7 +166,7 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
               最後一步
             </p>
 
-            <h1 className="font-black leading-[1.08] mb-2" style={{ fontSize: '2.1rem', letterSpacing: '-0.035em' }}>
+            <h1 className="font-serif font-medium leading-[1.08] mb-2" style={{ fontSize: '2.1rem', letterSpacing: '-0.035em' }}>
               選擇難度
             </h1>
             <p className="text-[14px] mb-8" style={{ color: 'rgba(58,51,39,0.35)' }}>
