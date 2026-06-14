@@ -87,8 +87,8 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
   }, [difficulty, onDone]);
 
   return (
-    <div className="min-h-screen text-zinc-100 flex flex-col relative overflow-hidden"
-      style={{ background: '#f5f0e5' }}>
+    <div className="min-h-screen flex justify-center items-stretch sm:items-center sm:py-10 px-0 sm:px-6" style={{ background: '#f4ecdf' }}>
+      <div className="relative w-full sm:max-w-[440px] flex flex-col overflow-hidden text-zinc-100 bg-[#fbf7ef] min-h-screen sm:min-h-[640px] sm:rounded-[30px] sm:border sm:border-black/[0.06] sm:shadow-[0_24px_70px_-22px_rgba(120,90,60,0.30)]">
 
       {/* Ambient color glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[280px] pointer-events-none transition-all duration-700"
@@ -228,6 +228,7 @@ export const Onboarding: React.FC<Props> = ({ onDone }) => {
             </button>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
