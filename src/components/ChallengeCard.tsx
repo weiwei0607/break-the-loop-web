@@ -92,7 +92,10 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
       >
         {/* 正面 */}
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl [backface-visibility:hidden] overflow-hidden"
+          className={[
+            'absolute inset-0 flex flex-col items-center justify-center rounded-2xl [backface-visibility:hidden] overflow-hidden',
+            isFlipped ? 'pointer-events-none' : '',
+          ].join(' ')}
           style={{
             background: config.gradient,
             boxShadow: `0 16px 44px ${config.glow}, 0 4px 14px rgba(120,90,60,0.14)`,
@@ -126,7 +129,10 @@ export const ChallengeCard: React.FC<Props> = ({ difficulty, challenge, onAccept
 
         {/* 背面 */}
         <div
-          className="absolute inset-0 flex flex-col items-center justify-between p-6 rounded-2xl [transform:rotateY(180deg)] [backface-visibility:hidden]"
+          className={[
+            'absolute inset-0 flex flex-col items-center justify-between p-6 rounded-2xl [transform:rotateY(180deg)] [backface-visibility:hidden]',
+            isFlipped ? 'pointer-events-auto' : 'pointer-events-none',
+          ].join(' ')}
           style={{
             background: 'linear-gradient(160deg, #fbf7ee 0%, #efe7d8 100%)',
             border: '1px solid rgba(120,90,60,0.12)',

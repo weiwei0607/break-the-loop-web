@@ -7,7 +7,7 @@ import {
   db, getSettings, updateSettings, getTodayStr, calculateStreak, completeToday,
   type DailyDraw, type Settings,
 } from '../db';
-import { Flame, BookOpen, Settings as SettingsIcon, Sparkles, Send, Loader2, RotateCcw } from 'lucide-react';
+import { Sprout, BookOpen, Settings as SettingsIcon, Sparkles, Send, Loader2, RotateCcw } from 'lucide-react';
 import { getApiKey, saveApiKey, generateReflection } from '../gemini';
 
 type Step = 'loading' | 'draw' | 'accepted' | 'completed';
@@ -210,7 +210,7 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
             boxShadow: streak > 0 ? '0 0 16px rgba(184,131,95,0.12)' : 'none',
           }}
         >
-          <Flame className={`w-4 h-4 text-orange-500 ${streak > 0 ? 'animate-flame' : ''}`} />
+          <Sprout className="w-4 h-4" style={{ color: '#8b9d7a' }} />
           <span className="text-sm font-bold text-zinc-300">
             連續破圈{' '}
             <span className="text-orange-400" style={{ fontVariantNumeric: 'tabular-nums' }}>
@@ -325,11 +325,11 @@ export const Index: React.FC<Props> = ({ onGoToPassbook }) => {
               {challenge.text}
             </p>
             <div
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 mb-2"
-              style={{ animation: 'streakPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.6s both' }}
+              className="flex items-center gap-2 px-4 py-2 rounded-full mb-2"
+              style={{ animation: 'streakPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.6s both', background: 'rgba(139,157,122,0.10)', border: '1px solid rgba(139,157,122,0.30)' }}
             >
-              <Flame className="w-4 h-4 text-orange-400" />
-              <span className="text-sm font-bold text-orange-300">連續 {streak} 天破圈</span>
+              <Sprout className="w-4 h-4" style={{ color: '#8b9d7a' }} />
+              <span className="text-sm font-bold" style={{ color: '#6f7d5f' }}>連續 {streak} 天破圈</span>
             </div>
             <p
               className="text-zinc-600 text-xs mb-8"

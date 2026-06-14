@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db, getStats, getTodayStr, type DailyDraw } from '../db';
-import { ArrowLeft, Flame, Trophy, Target, SkipForward, Calendar, Download, CheckCircle2, Clock } from 'lucide-react';
+import { ArrowLeft, Sprout, Trophy, Target, SkipForward, Calendar, Download, CheckCircle2, Clock } from 'lucide-react';
 
 interface Props {
   onBack: () => void;
@@ -124,7 +124,7 @@ export const Passbook: React.FC<Props> = ({ onBack }) => {
         {/* ── Stats grid ── */}
         <div className="grid grid-cols-2 gap-3">
           {[
-            { icon: Flame, label: '當前連續', value: stats.currentStreak, unit: '天', color: '#b8835f', glow: 'rgba(251,146,60,0.15)' },
+            { icon: Sprout, label: '當前連續', value: stats.currentStreak, unit: '天', color: '#8b9d7a', glow: 'rgba(139,157,122,0.15)' },
             { icon: Trophy, label: '最長連續', value: stats.longestStreak, unit: '天', color: '#c2a35e', glow: 'rgba(250,204,21,0.12)' },
             { icon: Target, label: '完成率', value: completionRate, unit: '%', color: '#8b9d7a', glow: 'rgba(139,157,122,0.12)' },
             { icon: Calendar, label: '總挑戰數', value: stats.total, unit: '天', color: 'rgba(58,51,39,0.6)', glow: 'none' },
