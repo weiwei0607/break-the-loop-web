@@ -3,10 +3,10 @@
 > 每天抽一張「身體覺察」任務，用 2 分鐘打破無意識的慣性循環
 
 <p align="center">
-  <img src="https://img.shields.io/badge/React-18-61DAFB?logo=react" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" />
   <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-3.x-06B6D4?logo=tailwindcss" />
-  <img src="https://img.shields.io/badge/Vite-5.x-646CFF?logo=vite" />
+  <img src="https://img.shields.io/badge/Vite-6.x-646CFF?logo=vite" />
 </p>
 
 <p align="center">
@@ -69,6 +69,14 @@
   完成進度：0/3
 ```
 
+### 🤖 AI 反思回饋（Gemini）
+
+完成挑戰後可以寫下感受，App 會呼叫 Gemini（gemini-2.5-flash）生成一段溫暖的反思回饋。
+
+- 自備 API Key（BYO Key）：在 App 內設定，僅存於你的瀏覽器 localStorage
+- 不經過任何後端，直接從瀏覽器呼叫 Google Generative Language API
+- 未設定 Key 也能正常使用所有其他功能
+
 ---
 
 ## 🏗️ 挑戰任務庫
@@ -103,10 +111,11 @@
 
 | 技術 | 用途 |
 |------|------|
-| React 18 + TypeScript | UI 框架 |
+| React 19 + TypeScript | UI 框架 |
 | Tailwind CSS | 樣式 |
-| Vite | 開發伺服器 + 打包 |
-| LocalStorage | 本地儲存歷史紀錄 |
+| Vite 6 + vite-plugin-pwa | 開發伺服器 + 打包 + PWA |
+| Dexie（IndexedDB） | 本地儲存歷史紀錄 |
+| Gemini API（自備 Key） | AI 反思回饋 |
 
 ---
 
